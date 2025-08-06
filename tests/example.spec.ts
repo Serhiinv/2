@@ -18,6 +18,10 @@ const testWithMarkers = smoke(
           const headline = page.locator('text=Playwright enables reliable end-to-end testing');
           await expect(headline).toBeVisible();
 
+            // Check for the main headline
+          const headline2 = page.locator('text=Playwright enables reliable end-to-end testing');
+          await expect(headline2).toBeVisible();
+
           const getstarted = page.getByRole('link', { name: 'Get started' });
           await expect(getstarted).toBeVisible();
 
@@ -34,3 +38,4 @@ const testWithMarkers = smoke(
   )
 );
 test('basic test', testWithMarkers);
+
