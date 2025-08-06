@@ -9,6 +9,6 @@ export const test = base.extend({
 
 test.beforeEach(async (_: unknown, testInfo) => {
   const fn = testInfo.fn as unknown;
-  if ((fn as any).smoke) testInfo.annotations.push({ type: 'tag', description: '@smoke' });
-  if ((fn as any).all_tests) testInfo.annotations.push({ type: 'tag', description: '@all_tests' });
+  if ((fn as Record<string, unknown>).smoke) testInfo.annotations.push({ type: 'tag', description: '@smoke' });
+  if ((fn as Record<string, unknown>).all_tests) testInfo.annotations.push({ type: 'tag', description: '@all_tests' });
 });
