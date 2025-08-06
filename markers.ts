@@ -1,5 +1,5 @@
 // Marker helpers for Playwright tests
-type TestFn = (...args: unknown[]) => unknown;
+type TestFn = (..._args: unknown[]) => unknown;
 type MarkedTestFn = TestFn & { [key: string]: unknown };
 
 export function all_tests(fn: TestFn): TestFn {
