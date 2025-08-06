@@ -1,0 +1,17 @@
+# Node
+node_modules/
+dist/
+*.log
+
+# Playwright
+playwright-report/
+*.trace
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+
+# Env
+.env
