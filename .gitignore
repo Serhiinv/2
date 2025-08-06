@@ -15,3 +15,6 @@ playwright-report/
 
 # Env
 .env
+
+# Project documentation
+SETUP_STEP_BY_STEP.md
