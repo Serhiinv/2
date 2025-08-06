@@ -1,34 +1,30 @@
 // Marker helpers for Playwright tests
-type TestFn = () => unknown;
-type MarkedTestFn = TestFn & { [key: string]: unknown };
+type MarkerMeta = { [key: string]: unknown };
+type MarkedTestFn<T extends (...args: any[]) => any = (...args: any[]) => any> = T & { markers?: MarkerMeta };
 
-export function all_tests(fn: TestFn): TestFn {
-  (fn as MarkedTestFn).all_tests = true;
-  return fn;
+function setMarker<T extends (...args: any[]) => any>(fn: T, key: string, value: unknown): MarkedTestFn<T> {
+  const marked = fn as MarkedTestFn<T>;
+  if (!marked.markers) marked.markers = {};
+  marked.markers[key] = value;
+  return marked;
 }
 
-export function smoke(fn: TestFn): TestFn {
-  (fn as MarkedTestFn).smoke = true;
-  return fn;
+export function all_tests<T extends (...args: any[]) => any>(fn: T): MarkedTestFn<T> {
+  return setMarker(fn, 'all_tests', true);
+}
+
+export function smoke<T extends (...args: any[]) => any>(fn: T): MarkedTestFn<T> {
+  return setMarker(fn, 'smoke', true);
 }
 
 export function jira(id: string) {
-  return (fn: TestFn): TestFn => {
-    (fn as MarkedTestFn).jira = id;
-    return fn;
-  };
+  return <T extends (...args: any[]) => any>(fn: T): MarkedTestFn<T> => setMarker(fn, 'jira', id);
 }
 
 export function owner(name: string) {
-  return (fn: TestFn): TestFn => {
-    (fn as MarkedTestFn).owner = name;
-    return fn;
-  };
+  return <T extends (...args: any[]) => any>(fn: T): MarkedTestFn<T> => setMarker(fn, 'owner', name);
 }
 
 export function test_name(name: string) {
-  return (fn: TestFn): TestFn => {
-    (fn as MarkedTestFn).test_name = name;
-    return fn;
-  };
+  return <T extends (...args: any[]) => any>(fn: T): MarkedTestFn<T> => setMarker(fn, 'test_name', name);
 }
