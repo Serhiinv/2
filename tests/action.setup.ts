@@ -7,8 +7,8 @@ export const test = base.extend({
   // ...extend fixtures if needed
 });
 
-test.beforeEach(async ({}, testInfo) => {
-  const fn = testInfo.fn as any;
-  if (fn.smoke) testInfo.annotations.push({ type: 'tag', description: '@smoke' });
-  if (fn.all_tests) testInfo.annotations.push({ type: 'tag', description: '@all_tests' });
+test.beforeEach(async (_: unknown, testInfo) => {
+  const fn = testInfo.fn as unknown;
+  if ((fn as any).smoke) testInfo.annotations.push({ type: 'tag', description: '@smoke' });
+  if ((fn as any).all_tests) testInfo.annotations.push({ type: 'tag', description: '@all_tests' });
 });
