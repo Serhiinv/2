@@ -1,7 +1,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { smoke } from '../markers';
+
 
 
 
@@ -37,7 +37,4 @@ const originalTest = async function ({ page }: { page: import('@playwright/test'
   console.log(`END: ${testInfo.title} (status: ${testInfo.status})`);
 };
 
-// Wrap the test function for marker helpers
-const wrappedTest = (...args: unknown[]) => originalTest(...(args as Parameters<typeof originalTest>));
-const originalTestWithMarkers = smoke(wrappedTest);
-test('basic test', originalTestWithMarkers);
+test('basic test @all_tests @smoke', originalTest);
