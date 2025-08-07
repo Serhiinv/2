@@ -1,6 +1,16 @@
+
 import { test, expect } from '@playwright/test';
 
-test('basic test', async ({ page }) => {
+
+
+
+
+
+
+const originalTest = async function ({ page }: { page: import('@playwright/test').Page }, testInfo: import('@playwright/test').TestInfo) {
+  // Basic debug info
+  console.log(`START: ${testInfo.title} (file: ${testInfo.file})`);
+
   await page.goto('https://playwright.dev/');
   await expect(page).toHaveTitle(/Playwright/);
 
@@ -8,11 +18,23 @@ test('basic test', async ({ page }) => {
   const headline = page.locator('text=Playwright enables reliable end-to-end testing');
   await expect(headline).toBeVisible();
 
-  // // Click on the Docs nav link
-  // await page.getByRole('link', { name: 'Docs' }).click();
-  // await expect(page).toHaveURL(/.*docs/);
+  // Check for the main headline again
+  const headline2 = page.locator('text=Playwright enables reliable end-to-end testing');
+  await expect(headline2).toBeVisible();
 
-  // // Check for the sidebar to be visible
+  const getstarted = page.getByRole('link', { name: 'Get started' });
+  await expect(getstarted).toBeVisible();
+
+  // Click on the Docs nav link
+  await page.getByRole('link', { name: 'Docs' }).click();
+  await expect(page).toHaveURL(/.*docs/);
+
+  // Check for the sidebar to be visible
   // const sidebar = page.locator('nav[aria-label="Sidebar"]');
   // await expect(sidebar).toBeVisible();
-});
+
+  // End debug info
+  console.log(`END: ${testInfo.title} (status: ${testInfo.status})`);
+};
+
+test('basic test @all_tests @smoke', originalTest);
