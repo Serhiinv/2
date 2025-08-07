@@ -16,15 +16,3 @@ export function all_tests<T extends (...args: unknown[]) => unknown>(fn: T): Mar
 export function smoke<T extends (...args: unknown[]) => unknown>(fn: T): MarkedTestFn<T> {
   return setMarker(fn, 'smoke', true);
 }
-
-export function jira(id: string) {
-  return <T extends (...args: unknown[]) => unknown>(fn: T): MarkedTestFn<T> => setMarker(fn, 'jira', id);
-}
-
-export function owner(name: string) {
-  return <T extends (...args: unknown[]) => unknown>(fn: T): MarkedTestFn<T> => setMarker(fn, 'owner', name);
-}
-
-export function test_name(name: string) {
-  return <T extends (...args: unknown[]) => unknown>(fn: T): MarkedTestFn<T> => setMarker(fn, 'test_name', name);
-}
