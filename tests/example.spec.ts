@@ -8,6 +8,9 @@ import { smoke } from '../markers';
 
 
 const originalTest = async function ({ page }: { page: import('@playwright/test').Page }, testInfo: import('@playwright/test').TestInfo) {
+  // Basic debug info
+  console.log(`START: ${testInfo.title} (file: ${testInfo.file})`);
+
   await page.goto('https://playwright.dev/');
   await expect(page).toHaveTitle(/Playwright/);
 
@@ -29,10 +32,12 @@ const originalTest = async function ({ page }: { page: import('@playwright/test'
   // Check for the sidebar to be visible
   // const sidebar = page.locator('nav[aria-label="Sidebar"]');
   // await expect(sidebar).toBeVisible();
+
+  // End debug info
+  console.log(`END: ${testInfo.title} (status: ${testInfo.status})`);
 };
 
 // Wrap the test function for marker helpers
 const wrappedTest = (...args: unknown[]) => originalTest(...(args as Parameters<typeof originalTest>));
 const originalTestWithMarkers = smoke(wrappedTest);
-test('basic test', originalTest);
-
+test('basic test', originalTestWithMarkers);
