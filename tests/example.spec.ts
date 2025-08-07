@@ -6,10 +6,11 @@ const testWithMarkers = smoke(
   jira('EX-1')(
     owner('ExampleAuthor')(
       test_name('Basic Playwright Example')(
+
         async ({ page }: { page: import('@playwright/test').Page }, testInfo: import('@playwright/test').TestInfo) => {
-          if (testWithMarkers.jira) testInfo.annotations.push({ type: 'jira', description: testWithMarkers.jira });
-          if (testWithMarkers.owner) testInfo.annotations.push({ type: 'owner', description: testWithMarkers.owner });
-          if (testWithMarkers.test_name) testInfo.annotations.push({ type: 'test_name', description: testWithMarkers.test_name });
+          if (testWithMarkers.markers?.jira) testInfo.annotations.push({ type: 'jira', description: String(testWithMarkers.markers.jira) });
+          if (testWithMarkers.markers?.owner) testInfo.annotations.push({ type: 'owner', description: String(testWithMarkers.markers.owner) });
+          if (testWithMarkers.markers?.test_name) testInfo.annotations.push({ type: 'test_name', description: String(testWithMarkers.markers.test_name) });
 
           await page.goto('https://playwright.dev/');
           await expect(page).toHaveTitle(/Playwright/);

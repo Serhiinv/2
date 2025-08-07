@@ -11,9 +11,9 @@ test.describe('Example Test Name 2', () => {
         test_name('Example Test Name 2')(
           async ({ page }: { page: import('@playwright/test').Page }, testInfo: import('@playwright/test').TestInfo) => {
             // Use marker values for reporting/annotations
-            if (testWithMarkers.jira) testInfo.annotations.push({ type: 'jira', description: testWithMarkers.jira });
-            if (testWithMarkers.owner) testInfo.annotations.push({ type: 'owner', description: testWithMarkers.owner });
-            if (testWithMarkers.test_name) testInfo.annotations.push({ type: 'test_name', description: testWithMarkers.test_name });
+            if (testWithMarkers.markers?.jira) testInfo.annotations.push({ type: 'jira', description: String(testWithMarkers.markers.jira) });
+            if (testWithMarkers.markers?.owner) testInfo.annotations.push({ type: 'owner', description: String(testWithMarkers.markers.owner) });
+            if (testWithMarkers.markers?.test_name) testInfo.annotations.push({ type: 'test_name', description: String(testWithMarkers.markers.test_name) });
 
             const user = {
               username: 'username',
