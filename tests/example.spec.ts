@@ -7,10 +7,18 @@ import { smoke, jira, owner, test_name } from '../markers';
 
 
 
+interface WithMarkers {
+  markers?: {
+    jira?: string;
+    owner?: string;
+    test_name?: string;
+  };
+}
 const originalTest = async function ({ page }: { page: import('@playwright/test').Page }, testInfo: import('@playwright/test').TestInfo) {
-  if ((originalTestWithMarkers as any).markers?.jira) testInfo.annotations.push({ type: 'jira', description: String((originalTestWithMarkers as any).markers.jira) });
-  if ((originalTestWithMarkers as any).markers?.owner) testInfo.annotations.push({ type: 'owner', description: String((originalTestWithMarkers as any).markers.owner) });
-  if ((originalTestWithMarkers as any).markers?.test_name) testInfo.annotations.push({ type: 'test_name', description: String((originalTestWithMarkers as any).markers.test_name) });
+  const markerObj = originalTestWithMarkers as WithMarkers;
+  if (markerObj.markers?.jira) testInfo.annotations.push({ type: 'jira', description: String(markerObj.markers.jira) });
+  if (markerObj.markers?.owner) testInfo.annotations.push({ type: 'owner', description: String(markerObj.markers.owner) });
+  if (markerObj.markers?.test_name) testInfo.annotations.push({ type: 'test_name', description: String(markerObj.markers.test_name) });
 
   await page.goto('https://playwright.dev/');
   await expect(page).toHaveTitle(/Playwright/);
