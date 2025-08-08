@@ -1,8 +1,6 @@
 name: Lint and Check TypeScript & Playwright
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
