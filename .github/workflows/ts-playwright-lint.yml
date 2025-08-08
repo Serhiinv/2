@@ -21,5 +21,7 @@ jobs:
         run: npx eslint . --ext .ts --max-warnings=0
       - name: TypeScript type check
         run: npx tsc --noEmit
-      - name: Playwright test dry run
-        run: npx playwright test --list
+      - name: Install Playwright Chromium Only
+        run: npx playwright install chromium
+      - name: Playwright test dry run on Chrome Only
+        run: npx playwright test --project=chromium --list
