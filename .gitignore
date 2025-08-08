@@ -6,6 +6,8 @@ dist/
 # Playwright
 playwright-report/
 *.trace
+test-results
+test-results/.last-run.json
 
 # VSCode
 .vscode/
@@ -17,7 +19,7 @@ playwright-report/
 .env
 
 # Project documentation
-SETUP_STEP_BY_STEP.md
+SETUP_NOTES.md
 
 # Notes
 no.test.ts
