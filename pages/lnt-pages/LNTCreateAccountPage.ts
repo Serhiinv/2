@@ -1,6 +1,4 @@
 import { expect, Page } from '@playwright/test';
-import { time } from 'console';
-import { TIMEOUT } from 'dns';
 
 export class LNTCreateAccountPage {
   readonly page: Page;
