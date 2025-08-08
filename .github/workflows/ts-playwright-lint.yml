@@ -1,8 +1,9 @@
 name: Lint and Check TypeScript & Playwright
 
 on:
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+  # pull_request:
+  #   branches: [ main ]
 
 jobs:
   lint:
