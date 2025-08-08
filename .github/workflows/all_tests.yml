@@ -3,6 +3,7 @@ name: Playwright All Tests
 on:
   schedule:
     - cron: '0 2 * * 1-5' # every weekday (Mon-Fri) at 2am UTC
+  workflow_dispatch:
 
 jobs:
   all_tests:
