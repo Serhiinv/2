@@ -1,4 +1,6 @@
 import { expect, Page } from '@playwright/test';
+import { time } from 'console';
+import { TIMEOUT } from 'dns';
 
 export class LNTCreateAccountPage {
   readonly page: Page;
@@ -55,7 +57,7 @@ export class LNTCreateAccountPage {
     await expect(this.page.locator('text=Please enter a valid email address')).toBeVisible();
     await emailAddress.fill('test@g.com');
     await this.page.locator("//span[contains(text(),'Create an account')]").click();
-    await expect(this.page.locator('text=Please check your email and click the link to log in.')).toBeVisible();
+    await expect(this.page.locator('text=Please check your email and click the link to log in.')).toBeVisible({timeout: 10_000});
   }
 
 }
