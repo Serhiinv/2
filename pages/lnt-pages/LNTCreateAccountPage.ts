@@ -43,19 +43,20 @@ export class LNTCreateAccountPage {
     await this.page.goBack();   
   }
 
-  async verifyEmailLogin() {
+  async verifyEmailLogin(param: string) {
     const emailAddress = this.page.locator("input[type='email']");
     await expect(this.page.locator("//label[contains(text(),'Email Address')]")).toBeVisible();
 
-    await this.page.locator("//span[contains(text(),'Create an account')]").click();
-
+    await this.page.locator(`//span[contains(text(),'${param}')]`).click();
     await expect(this.page.locator('text=Please enter a valid email address')).toBeVisible();
+
     await emailAddress.fill('qwerty');
-    await this.page.locator("//span[contains(text(),'Create an account')]").click();
+    await this.page.locator(`//span[contains(text(),'${param}')]`).click();
     await expect(this.page.locator('text=Please enter a valid email address')).toBeVisible();
-    await emailAddress.fill('test@g.com');
-    await this.page.locator("//span[contains(text(),'Create an account')]").click();
-    await expect(this.page.locator('text=Please check your email and click the link to log in.')).toBeVisible({timeout: 10_000});
-  }
 
+    await emailAddress.fill('test@g.com');
+    await this.page.locator(`//span[contains(text(),'${param}')]`).click();
+    await expect(this.page.locator('text=Please check your email and click the link to log in.')).toBeVisible({timeout: 10_000});
+    await expect(this.page.locator('text=If you need any help contact us on 0131 557 8844 or info@lyonandturnbull.com')).toBeVisible({timeout: 10_000});
+  }
 }
