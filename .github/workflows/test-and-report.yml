@@ -1,10 +1,6 @@
 name: Tests with Allure Report
 
 on:
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -13,8 +9,11 @@ permissions:
   id-token: write
 
 jobs:
-  test:
+  test-and-report:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,62 +27,33 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Update Playwright to latest version
-        run: npm install -D @playwright/test@latest playwright@latest allure-playwright
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Install Allure commandline
+      - name: Install Playwright and Allure
         run: |
+          npm install -D @playwright/test@latest playwright@latest allure-playwright
+          npx playwright install chromium --with-deps
           curl -o allure-commandline.tgz -OL https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.25.0/allure-commandline-2.25.0.tgz
           tar -zxvf allure-commandline.tgz -C /tmp
           sudo mv /tmp/allure-2.25.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           rm allure-commandline.tgz
 
-      - name: Run Playwright tests
-        run: npx playwright test --project=chromium
+      - name: Run Tests and Generate Report
+        run: |
+          npx playwright test --project=chromium
+          allure generate allure-results -o allure-report --clean
         env:
           CI: true
-        
-      - name: Generate Allure Report
-        if: always()
-        run: |
-          allure generate allure-results -o allure-report --clean
-          
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: |
-            allure-results/
-            allure-report/
-          retention-days: 30
-
-  deploy-report:
-    needs: test
-    if: always()
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download test results
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-results
-          path: allure-report
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
+        if: always()
         with:
           path: allure-report
 
       - name: Deploy to GitHub Pages
         id: deployment
+        if: always()
         uses: actions/deploy-pages@v2
