@@ -1,4 +1,4 @@
-name: Playwright tests and publish report
+name: Run Playwright Smoke Tests and Publish Report to Pages
 
 on:
   # push:
@@ -45,14 +45,15 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report
+          retention-days: 30
 
       - name: Configure Pages
         uses: actions/configure-pages@v3
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./playwright-report
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
