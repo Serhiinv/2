@@ -39,7 +39,7 @@ export class LNTCreateAccountPage {
     const facebookLogo = this.page.locator('div[class="MuiBox-root mui-1i3004h"]').nth(2);
     await expect(facebookLogo).toBeVisible();
     await facebookLogo.click();
-    await expect(this.page.locator("//span[contains(text(),'Facebook')]")).toBeVisible();
+    await expect(this.page.locator("//span[contains(text(),'Facebook')]").nth(1)).toBeVisible();
     await this.page.goBack();   
   }
 
