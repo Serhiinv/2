@@ -18,17 +18,48 @@ jobs:
         run: npx playwright install chromium
       - name: Run Playwright Smoke Tests on Chrome Only
         run: npx playwright test --project=chromium --grep @smoke
-      - name: Debug - show report folder
-        run: |
-          echo "Exit code of previous command: $?"
-          pwd
-          ls -la
-          ls -la playwright-report || echo "playwright-report not found"
-          find playwright-report -maxdepth 3 -type f -print || true
 
-      - name: Upload Playwright HTML report
+      # - name: Debug - show report folder
+      #   run: |
+      #     echo "Exit code of previous command: $?"
+      #     pwd
+      #     ls -la
+      #     ls -la playwright-report || echo "playwright-report not found"
+      #     find playwright-report -maxdepth 3 -type f -print || true
+
+      # - name: Upload Playwright HTML report
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: playwright-report
+      #     path: playwright-report
+
+
+      - name: Show report (debug)
+        if: always()
+        run: |
+          ls -la playwright-report || true
+          find playwright-report -type f -maxdepth 4 -print || true
+
+      # Create artifact for Pages deployment
+      - name: Upload report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report
+
+      # Use pages action to publish
+      - name: Deploy to GitHub Pages
+        if: always()
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact for Pages
+        if: always()
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./playwright-report
+
+      - name: Deploy to Pages
+        if: always()
+        uses: actions/deploy-pages@v1
