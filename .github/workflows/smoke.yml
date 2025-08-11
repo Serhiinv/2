@@ -18,7 +18,16 @@ jobs:
         run: npx playwright install chromium
       - name: Run Playwright Smoke Tests on Chrome Only
         run: npx playwright test --project=chromium --grep @smoke
+      - name: Debug - show report folder
+        run: |
+          echo "Exit code of previous command: $?"
+          pwd
+          ls -la
+          ls -la playwright-report || echo "playwright-report not found"
+          find playwright-report -maxdepth 3 -type f -print || true
+
       - name: Upload Playwright HTML report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
