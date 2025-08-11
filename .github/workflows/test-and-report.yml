@@ -28,11 +28,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Update Playwright to latest version
+        run: npm install -D @playwright/test@latest playwright@latest
+
       - name: Install Playwright browsers
-        run: npx playwright install chromium
+        run: npx playwright install chromium --with-deps
 
       - name: Run Playwright tests
         run: npx playwright test --project=chromium --reporter=html
+        env:
+          CI: true
+          # Add any environment variables your tests need
         
       - name: Upload test results
         if: always()
