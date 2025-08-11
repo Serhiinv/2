@@ -20,3 +20,8 @@ jobs:
         run: npx playwright install chromium
       - name: Run Playwright All Tests on Chrome Only
         run: npx playwright test --project=chromium --grep @all_tests
+      - name: Upload Playwright HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
