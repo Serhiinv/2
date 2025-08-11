@@ -1,4 +1,4 @@
-name: Tests and Report Publication
+name: Tests with Allure Report
 
 on:
 #   push:
@@ -29,23 +29,37 @@ jobs:
         run: npm ci
 
       - name: Update Playwright to latest version
-        run: npm install -D @playwright/test@latest playwright@latest
+        run: npm install -D @playwright/test@latest playwright@latest allure-playwright
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
+      - name: Install Allure commandline
+        run: |
+          curl -o allure-commandline.tgz -OL https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.25.0/allure-commandline-2.25.0.tgz
+          tar -zxvf allure-commandline.tgz -C /tmp
+          sudo mv /tmp/allure-2.25.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          rm allure-commandline.tgz
+
       - name: Run Playwright tests
-        run: npx playwright test --project=chromium --reporter=html
+        run: npx playwright test --project=chromium
         env:
           CI: true
-          # Add any environment variables your tests need
         
+      - name: Generate Allure Report
+        if: always()
+        run: |
+          allure generate allure-results -o allure-report --clean
+          
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report
+          name: allure-results
+          path: |
+            allure-results/
+            allure-report/
           retention-days: 30
 
   deploy-report:
@@ -59,8 +73,8 @@ jobs:
       - name: Download test results
         uses: actions/download-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report
+          name: allure-results
+          path: allure-report
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -68,7 +82,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: playwright-report
+          path: allure-report
 
       - name: Deploy to GitHub Pages
         id: deployment

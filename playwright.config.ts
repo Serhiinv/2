@@ -10,9 +10,14 @@ export default defineConfig({
   forbidOnly: typeof process !== 'undefined' && !!process.env.CI,
   retries: typeof process !== 'undefined' && process.env.CI ? 2 : 0,
   workers: typeof process !== 'undefined' && process.env.CI ? 1 : undefined as unknown as number,
-  // reporter: 'list',
-  // reporter: [['html', { open: 'never' }]],
-  reporter: [['html', { open: 'never', outputFolder: 'playwright-report' }]],
+  reporter: [
+    ['list'],
+    ['allure-playwright', {
+      detail: true,
+      outputFolder: 'allure-results',
+      suiteTitle: false
+    }]
+  ],
   use: {
     trace: 'on-first-retry',
     baseURL: 'https://playwright.dev/',
