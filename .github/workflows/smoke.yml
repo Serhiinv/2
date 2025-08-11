@@ -18,3 +18,8 @@ jobs:
         run: npx playwright install chromium
       - name: Run Playwright Smoke Tests on Chrome Only
         run: npx playwright test --project=chromium --grep @smoke
+      - name: Upload Playwright HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
