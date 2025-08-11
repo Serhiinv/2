@@ -1,3 +1,5 @@
+name: Playwright tests and publish report
+
 on:
   push:
     branches: [ main ]
