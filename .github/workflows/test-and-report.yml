@@ -44,6 +44,11 @@ jobs:
         env:
           CI: true
 
+      - name: Debug Allure Report Directory
+        run: |
+          ls -l
+          ls -l allure-report || echo "allure-report does not exist"
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
@@ -52,8 +57,3 @@ jobs:
         if: always()
         with:
           path: allure-report
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        if: always()
-        uses: actions/deploy-pages@v2
