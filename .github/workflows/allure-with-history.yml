@@ -148,9 +148,18 @@ jobs:
         id: summary
         if: always()
         run: |
-          SUMMARY_JSON=$(find "$REPORT_DIR/widgets" -name summary.json | head -n 1)
-          PASSED=$(jq '.statistic.passed' "$SUMMARY_JSON")
-          FAILED=$(jq '.statistic.failed' "$SUMMARY_JSON")
+          # Find the newest Allure report directory
+          LATEST_REPORT_DIR=$(ls -dt gh-pages/allure-reports/*/ | head -n 1)
+          SUMMARY_JSON="${LATEST_REPORT_DIR}widgets/summary.json"
+          echo "Found summary at $SUMMARY_JSON"
+          if [ -f "$SUMMARY_JSON" ]; then
+            PASSED=$(jq '.statistic.passed' "$SUMMARY_JSON")
+            FAILED=$(jq '.statistic.failed' "$SUMMARY_JSON")
+          else
+            PASSED=0
+            FAILED=0
+            echo "No summary.json found at $SUMMARY_JSON!"
+          fi
           echo "passed=$PASSED" >> $GITHUB_OUTPUT
           echo "failed=$FAILED" >> $GITHUB_OUTPUT
       
