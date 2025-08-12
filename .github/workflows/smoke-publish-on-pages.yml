@@ -1,4 +1,4 @@
-name: Run Playwright Smoke Tests and Publish Report to Pages
+name: Smoke - Publish Report to Pages
 
 on:
   # push:
