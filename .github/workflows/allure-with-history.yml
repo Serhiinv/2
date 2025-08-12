@@ -190,7 +190,7 @@ jobs:
         env:
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           RECIPIENTS: bv.user.as@gmail.com
-          SENDER: ci@test.ns.com
+          SENDER: serhii.nv@gmail.com
           REPORT_URL: https://serhiinv.github.io/tsc-project/ # or workflow run URL / artifact link
         run: |
           SUBJECT="Allure Report - ${{ github.workflow }} - ${{ github.ref_name }} - Passed:${{ steps.summary.outputs.passed }} Failed:${{ steps.summary.outputs.failed }}"
