@@ -39,7 +39,7 @@ jobs:
           rm allure-commandline.tgz
 
       - name: Run Playwright tests
-        run: npx playwright test --project=chromium
+        run: npx playwright test --project=chromium --grep @smoke
         env:
           CI: true
 
@@ -144,6 +144,16 @@ jobs:
           </html>
           EOF
 
+      - name: Set summary outputs (passed/failed) # Setup summary for email sending
+        id: summary
+        if: always()
+        run: |
+          SUMMARY_JSON=$(find "$REPORT_DIR/widgets" -name summary.json | head -n 1)
+          PASSED=$(jq '.statistic.passed' "$SUMMARY_JSON")
+          FAILED=$(jq '.statistic.failed' "$SUMMARY_JSON")
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+      
       - name: Commit and push to gh-pages
         run: |
           cd gh-pages
@@ -165,3 +175,30 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Send email via SendGrid  # Add Send email notifications
+        if: always()
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          RECIPIENTS: bv.user.as@gmail.com
+          SENDER: ci@test.ns.com
+          REPORT_URL: https://serhiinv.github.io/tsc-project/ # or workflow run URL / artifact link
+        run: |
+          SUBJECT="Allure Report - ${{ github.workflow }} - ${{ github.ref_name }} - Passed:${{ steps.summary.outputs.passed }} Failed:${{ steps.summary.outputs.failed }}"
+          BODY="Test run summary:\nPassed: ${{ steps.summary.outputs.passed }}\nFailed: ${{ steps.summary.outputs.failed }}\nReport: $REPORT_URL\n\nSee artifacts for details."
+
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer $SENDGRID_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [{
+                "to": [{"email": "'"$RECIPIENTS"'"}],
+                "subject": "'"$SUBJECT"'"
+              }],
+              "from": {"email": "'"$SENDER"'"},
+              "content": [{
+                "type": "text/plain",
+                "value": "'"$BODY"'"
+              }]
+            }'

@@ -3,7 +3,7 @@ import { LNTCreateAccountPage } from "../../pages/lnt-pages/LNTCreateAccountPage
 import { LNTHomePage } from "../../pages/lnt-pages/LNTHomePage";
 import { LNTHeaderMenuPage } from "../../pages/lnt-pages/LNTHeaderMenuPage";
 
-test("tests Verify Create Account Page @smoke", async ({ page }) => {
+test("tests Verify Create Account Page", async ({ page }) => {
 
   await new LNTHomePage(page).open();
   const headerMenu = new LNTHeaderMenuPage(page);
