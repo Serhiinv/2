@@ -117,15 +117,15 @@ jobs:
               <tbody>
           EOF
 
-              for d in $REPORTS_DIR/*/ ; do
-                [ -d "$d" ] || continue
-                ts=$(basename "$d")
-                # Parse date and time from folder name (YYYYMMDD-HHMMSS)
-                dt="$(date -d "${ts:0:8} ${ts:9:2}:${ts:11:2}:${ts:13:2}" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "$ts")"
-                echo "      <tr><td>$ts</td><td>$dt</td><td><a href=\"./$ts/index.html\">Open Report</a></td></tr>" >> "$INDEX_FILE"
-              done
+                    for d in $REPORTS_DIR/*/ ; do
+                      [ -d "$d" ] || continue
+                      ts=$(basename "$d")
+                      # Parse date and time from folder name (YYYYMMDD-HHMMSS)
+                      dt="$(date -d "${ts:0:8} ${ts:9:2}:${ts:11:2}:${ts:13:2}" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "$ts")"
+                      echo "      <tr><td>$ts</td><td>$dt</td><td><a href=\"./$ts/index.html\">Open Report</a></td></tr>" >> "$INDEX_FILE"
+                    done
 
-              cat >> "$INDEX_FILE" <<EOF
+                    cat >> "$INDEX_FILE" <<EOF
               </tbody>
             </table>
           </body>
