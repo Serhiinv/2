@@ -17,6 +17,6 @@ test("tests Verify Create Account Page @smoke", async ({ page }) => {
 
   await createAccount.verifyGoogleLogin();
   await createAccount.verifyAppleLogin();
-  // await createAccount.verifyFacebookLogin();
+  await createAccount.verifyFacebookLogin();
   await createAccount.verifyEmailLogin('Create an account');
 });
