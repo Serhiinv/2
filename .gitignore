@@ -8,6 +8,9 @@ playwright-report/
 *.trace
 test-results
 test-results/.last-run.json
+allure-results/
+allure-report/
+.allure
 
 # VSCode
 .vscode/

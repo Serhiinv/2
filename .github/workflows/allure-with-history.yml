@@ -1,4 +1,4 @@
-name: Tests with Allure Report
+name: Tests with Allure Report (History)
 
 on:
   workflow_dispatch:
@@ -42,20 +42,26 @@ jobs:
         run: npx playwright test --project=chromium
         env:
           CI: true
-        
+
+      - name: Set Timestamped Report Directory
+        id: set_report_dir
+        run: |
+          TS=$(date +'%Y%m%d-%H%M%S')
+          echo "TS=$TS" >> $GITHUB_ENV
+          echo "REPORT_DIR=allure-reports/$TS" >> $GITHUB_ENV
+
       - name: Generate Allure Report
         if: always()
         run: |
-          allure generate allure-results -o allure-report --clean
-          
-      - name: Upload test results
+          mkdir -p $REPORT_DIR
+          allure generate allure-results -o $REPORT_DIR --clean
+
+      - name: Upload Allure Reports artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results
-          path: |
-            allure-results/
-            allure-report/
+          name: allure-reports
+          path: allure-reports
           retention-days: 30
 
   deploy-report:
@@ -63,25 +69,21 @@ jobs:
     if: always()
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Download test results
-        if: always()
+      - name: Download Allure Reports artifact
         uses: actions/download-artifact@v4
         with:
-          name: allure-results
-          path: allure-report
+          name: allure-reports
+          path: allure-reports
 
       - name: Setup Pages
-        if: always()
         uses: actions/configure-pages@v4
 
       - name: Upload Pages artifact
-        if: always()
         uses: actions/upload-pages-artifact@v3
         with:
-          path: allure-report
+          path: allure-reports
 
       - name: Deploy to GitHub Pages
         id: deployment
