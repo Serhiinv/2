@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -54,34 +54,46 @@ jobs:
           mkdir -p "$REPORT_DIR"
           allure generate allure-results -o "$REPORT_DIR" --clean
 
-      - name: Upload Allure Reports artifact
+      - name: Upload Allure Report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-reports
+          name: new-allure-report
           path: allure-reports
-          retention-days: 30
+          retention-days: 7
 
   deploy-report:
     needs: test
     if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     environment:
       name: github-pages
-    runs-on: ubuntu-latest
     steps:
-      - name: Download Allure Reports artifact
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Download new Allure Report artifact
         uses: actions/download-artifact@v4
         with:
-          name: allure-reports
-          path: allure-reports
+          name: new-allure-report
+          path: new-allure-report
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - name: Merge new report into history
+        run: |
+          mkdir -p gh-pages/allure-reports
+          # Copy each subfolder from new-allure-report (should only be one, timestamped)
+          cp -r new-allure-report/* gh-pages/allure-reports/
 
       - name: Generate Allure Report Index (table with date/time)
-        if: always()
         run: |
-          REPORTS_DIR="allure-reports"
+          REPORTS_DIR="gh-pages/allure-reports"
           INDEX_FILE="$REPORTS_DIR/index.html"
           cat > "$INDEX_FILE" <<EOF
           <!DOCTYPE html>
@@ -117,10 +129,10 @@ jobs:
               <tbody>
           EOF
 
-                    for d in $REPORTS_DIR/*/ ; do
+                    # List all subfolders, sort newest first
+                    for d in $(ls -d $REPORTS_DIR/*/ 2>/dev/null | sort -r); do
                       [ -d "$d" ] || continue
                       ts=$(basename "$d")
-                      # Parse date and time from folder name (YYYYMMDD-HHMMSS)
                       dt="$(date -d "${ts:0:8} ${ts:9:2}:${ts:11:2}:${ts:13:2}" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "$ts")"
                       echo "      <tr><td>$ts</td><td>$dt</td><td><a href=\"./$ts/index.html\">Open Report</a></td></tr>" >> "$INDEX_FILE"
                     done
@@ -132,10 +144,23 @@ jobs:
           </html>
           EOF
 
+      - name: Commit and push to gh-pages
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add allure-reports
+          timestamp=$(date)
+          git commit -m "Update Allure report history: $timestamp" || echo "No changes to commit"
+          git push origin gh-pages
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: allure-reports
+          path: gh-pages/allure-reports
 
       - name: Deploy to GitHub Pages
         id: deployment
