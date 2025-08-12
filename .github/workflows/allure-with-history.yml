@@ -44,17 +44,15 @@ jobs:
           CI: true
 
       - name: Set Timestamped Report Directory
-        id: set_report_dir
         run: |
           TS=$(date +'%Y%m%d-%H%M%S')
-          echo "TS=$TS" >> $GITHUB_ENV
           echo "REPORT_DIR=allure-reports/$TS" >> $GITHUB_ENV
 
       - name: Generate Allure Report
         if: always()
         run: |
-          mkdir -p $REPORT_DIR
-          allure generate allure-results -o $REPORT_DIR --clean
+          mkdir -p "$REPORT_DIR"
+          allure generate allure-results -o "$REPORT_DIR" --clean
 
       - name: Upload Allure Reports artifact
         if: always()
